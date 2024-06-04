@@ -1,0 +1,133 @@
+    <script>
+
+        function insertNewDataForWeight(){
+            const urlToSendWeight = "http://192.168.1.248:5000/patient_details";
+            var patientId = sessionStorage.getItem("patientId");
+
+            const dataToSend = {
+                    "patientId": patientId
+                }
+
+            const jsonString = JSON.stringify(dataToSend, null, 2);
+            fetch(urlToSendWeight, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: jsonString
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert("Saved Successful");
+                })
+                .catch(error => {
+                    console.error('Error:', error); // Handle errors
+                });  
+        }
+
+        function loadPatientIdData(){
+                const urlToGetPatientsIdData = "http://192.168.1.248:5000/patient_details";
+                //const urlToGetPatientsIdData = "http://127.0.0.1:8000/patient_details";
+                var loginStatus = sessionStorage.getItem("login_status");
+                if (loginStatus== null || loginStatus == "Failed") window.location.href="Login_Page.html";
+                var patientId = sessionStorage.getItem("patientId");
+                console.log(typeof patientId);
+
+                const dataToSend = {
+                    "patientId": patientId
+                }
+
+                const jsonString = JSON.stringify(dataToSend, null, 2);
+
+                fetch(urlToGetPatientsIdData, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: jsonString
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("patientId").value = data.patientId;
+                    document.getElementById("name").value = data.name;
+                    document.getElementById("surname").value = data.surname;
+                    document.getElementById("gender").value = data.gender;
+                    document.getElementById("age").value = data.age;
+                    document.getElementById("weight").value = data.weight;
+                    document.getElementById("diagnosis").value = data.diagnosis;
+                    document.getElementById("death").value = data.death;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });    
+
+        }
+
+
+
+    </script>
+
+
+style="border: 0" width="400" height="300" frameborder="0" scrolling="no"
+
+
+
+
+deleted from home page
+
+                    <div>
+                        <hr>
+                        <span>Diagram Type:</span>
+                        <select id="diagramType" class="comboBoxStyling">
+                            <option value="TimeInRange">Time in Range</option>
+                            <option value="GlucoseInsulin">Glucose - Insulin</option>
+                        </select>
+                        
+                        <br>
+                        <span>Date from:</span>
+                        <select id="dateFromDiagramComboBox" class="comboBoxStyling" onchange="loadDates('to')"></select>
+                        <br>
+                        <span>Date from:</span>
+                        <select id="dateToDiagramComboBox" class="comboBoxStyling" ></select>
+                        <br>
+                        <button onclick="loadDiagram(true)" class="inputButton" style="background-color: aqua; color: black;">Load Diagram</button>
+                        
+                    </div>
+
+
+
+                    function loadDates(date){
+            const url = getEndPoint("/load_dates");
+            var dateSelect;
+            if(date === "from") dateSelect = document.getElementById("dateFromDiagramComboBox"); 
+            else  dateSelect = document.getElementById("dateToDiagramComboBox"); 
+               
+            const dataTSend = {
+                "patientId" : sessionStorage.getItem("patientId"),
+                "date" : date,
+                "dateFrom": document.getElementById("dateFromDiagramComboBox").value
+            }
+
+            const jsonString = JSON.stringify(dataTSend, null, 2);
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: jsonString
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(item =>{
+
+                    var option = document.createElement("option");
+                    option.value = item.date;
+                    option.innerHTML = item.date;
+                    dateSelect.appendChild(option);
+                })
+                
+            })
+            .catch(error => {
+                console.error('Error:', error); // Handle errors
+            });
+        }
