@@ -3,15 +3,16 @@ from flask import Flask, request, jsonify, send_file
 from Manage import *
 from flask_cors import CORS
 import pandas as pd
-import json
 from datetime import datetime, timedelta
+from Database import configure_db  # Import the function to configure the DB
 
 # Initialize Flask application
-app = Flask('Insulin')
+app = Flask('InsulinDb')
 
 # Initialize CORS to allow requests from any origin
 CORS(app, origins='*')
 
+configure_db(app)
 
 # Endpoint for user login
 @app.route('/login', methods=['POST'])
@@ -367,11 +368,10 @@ def read_messages():
 
         # Extract message ID from request data
         message_id = data.get('messageId')
-
-        print(message_id)
+        user_id = data.get('userId')
 
         # Update message status to "read" in the database
-        if update_read_messages_db(message_id):
+        if update_read_messages_db(message_id, user_id):
             return jsonify({'message': 'Succeed to change message status to Read'}), 200
         else:
             return jsonify({'message': 'Failed to change message status to Read'}), 405

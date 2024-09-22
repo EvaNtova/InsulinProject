@@ -1,10 +1,11 @@
 # Importing necessary classes from other modules
 from Objects import *  # Importing classes for storing credentials, patient details, and doctor details
-from Database import *  # Importing functions for database operations
+from Database import * # Importing functions for database operations
 
 
 # Function to attempt login with provided username and password
 def login_attempt(username, password):
+
     # Check credentials against database
     cred_results = check_credentials_db(username, password)
 
